@@ -1,5 +1,5 @@
 section .data
-error_mesage db "> Insufficient argument offered", 0xa
+error_mesage db "> Insufficient argument offered"
 line_breaker db 0xa
 
 section .text
@@ -9,6 +9,9 @@ _start:
 
 ; Get argc
 pop rcx
+
+; Check if the parameters quantity is enought
+cmp rcx, 0x3
 jne inssuficient_parameters
 
 add rsp, 0x8
@@ -32,8 +35,8 @@ jmp convert_to_string
 inssuficient_parameters:
     mov rax, 0x1
     mov rdi, 0x1
-    mov rsi, inssuficient_parameters
-    mov rdx, 31
+    mov rsi, error_mesage
+    mov rdx, 0x3f
     syscall
 
     jmp exit
@@ -43,7 +46,7 @@ convert_to_string:
     mov rdx, 0x0
     mov rbx, 0xa
     div rbx
-    add rdx, 48
+    add rdx, 0x30
     push rdx
     inc r12
     cmp rax, 0x0
@@ -55,7 +58,7 @@ convert_to_int:
     xor rax, rax
     mov rcx, 0xa
 
-    next:
+next:
         cmp [rsi], byte 0x0
         je return
         mov bl, [rsi]
@@ -65,8 +68,9 @@ convert_to_int:
         inc rsi
         jmp next
 
-    return:
+return:
         ret
+
 
 print:
     mov rax, 0x1
@@ -80,15 +84,17 @@ print:
     mov rsi, rsp
     syscall
 
-    jmp print_line_breaker
+jmp print_line_breaker
 
-    print_line_breaker:
-        mov rax, 0x1
-        mov rdi, 0x1
-        mov rsi, line_breaker
-        mov rdx, line_breaker
-        syscall
-        jmp exit
+print_line_breaker:
+    mov rax, 0x1
+    mov rdi, 0x1
+    mov rsi, line_breaker
+    mov rdx, 0x1
+    syscall
+
+    jmp exit
+
 
 exit:
     mov rax, 0x3c
