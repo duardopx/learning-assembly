@@ -53,8 +53,10 @@ convert_to_string:
     add rdx, 0x30
     push rdx
     inc r12
+
     cmp rax, 0x0
     jne convert_to_string
+
     jmp print
 
 
@@ -66,11 +68,13 @@ convert_to_int:
 next:
         cmp [rsi], byte 0x0
         je return
+
         mov bl, [rsi]
         sub bl, 0x30
         mul rcx
         add rax, rbx
         inc rsi
+
         jmp next
 
 return:
@@ -85,12 +89,12 @@ print:
     mul r12
     mov rdx, rax
 
-    mov rax, 1
-    mov rdi, 1
+    mov rax, 0x1
+    mov rdi, 0x1
     mov rsi, rsp
     syscall
 
-jmp print_line_breaker
+    jmp print_line_breaker
 
 print_line_breaker:
     mov rax, 0x1
